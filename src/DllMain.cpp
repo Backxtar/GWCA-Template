@@ -1,4 +1,4 @@
-#include "hooks.h"
+#include "pch.h"
 
 BOOL WINAPI DllMain(HMODULE hModule, DWORD dwReason, LPVOID lpReserved)
 {

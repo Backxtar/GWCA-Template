@@ -19,6 +19,15 @@ void DrawUI(IDirect3DDevice9* device)
 		io.MouseDrawCursor = false;
 		io.ConfigWindowsMoveFromTitleBarOnly = true;
 
+		ImGuiStyle& style = ImGui::GetStyle();
+		style.TabRounding = 8.f;
+		style.FrameRounding = 8.f;
+		style.GrabRounding = 8.f;
+		style.WindowRounding = 8.f;
+		style.PopupRounding = 8.f;
+		style.FrameBorderSize = 1.00;
+		style.WindowBorderSize = 1.00;
+
 		Draw::dVar.imgui_init = true;
 	}
 
@@ -33,6 +42,7 @@ void DrawUI(IDirect3DDevice9* device)
 	// Draw UI elements
 	if (Draw::dVar.imgui_show)
 	{
+		//ImGui::ShowDemoWindow();
 		ImGui::SetNextWindowBgAlpha(0.7f);
 		ImGui::Begin("Hello Guild Wars!", 0, ImGuiWindowFlags_NoResize);
 		ImGui::Text("This is a mod made by Backxtar!");

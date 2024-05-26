@@ -70,20 +70,17 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT Message, WPARAM wParam, LPARAM lParam)
     const ImGuiIO& io = ImGui::GetIO();
     const bool skip_mouse_capture = right_mouse_down || GW::UI::GetIsWorldMapShowing() || GW::Map::GetIsInCinematic();
 
+    if (skip_mouse_capture) return CallWindowProc((WNDPROC)Hooks::hVar.OldWndProc, hWnd, Message, wParam, lParam);
     if (ImGui_ImplWin32_WndProcHandler(hWnd, Message, wParam, lParam) && !skip_mouse_capture) return TRUE;
 
     switch (Message) {
-        // Send button up mouse events to everything, to avoid being stuck on mouse-down
+
+    // Send button up mouse events to everything, to avoid being stuck on mouse-down
     case WM_LBUTTONUP:
     case WM_RBUTTONUP:
     case WM_INPUT:
         break;
 
-        // Other mouse events:
-        // - If right mouse down, leave it to gw
-        // - ImGui first (above), if WantCaptureMouse that's it
-        // - Toolbox module second (e.g.: minimap), if captured, that's it
-        // - otherwise pass to gw
     case WM_LBUTTONDOWN:
     case WM_LBUTTONDBLCLK:
     case WM_RBUTTONDOWN:
@@ -92,16 +89,17 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT Message, WPARAM wParam, LPARAM lParam)
     case WM_MOUSEWHEEL: {
         if (io.WantCaptureMouse && !skip_mouse_capture)
             return true;
-    }
         break;
+    }
 
-    // keyboard messages
+    // if imgui wants them, send to imgui (above) and to gw
     case WM_KEYUP:
     case WM_SYSKEYUP: {
         if (io.WantTextInput)
-            break; // if imgui wants them, send to imgui (above) and to gw
-    } // else fallthrough
+            break;
+    }
 
+    // if imgui wants them, send just to imgui (above)
     case WM_KEYDOWN:
     case WM_SYSKEYDOWN:
     case WM_CHAR:
@@ -114,18 +112,15 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT Message, WPARAM wParam, LPARAM lParam)
     case WM_MBUTTONDBLCLK:
     case WM_MBUTTONUP: {
         if (io.WantTextInput)
-            return true; // if imgui wants them, send just to imgui (above)
+            return true;
     }
 
+    // We may want to not send events to imgui if the player is typing in - game
     case WM_ACTIVATE:
-    // note: capturing those events would prevent typing if you have a hotkey assigned to normal letters.
-    // We may want to not send events to toolbox if the player is typing in-game
-    // Otherwise, we may want to capture events.
-    // For that, we may want to only capture *successfull* hotkey activations.
         break;
-
     case WM_SIZE: // ImGui doesn't need this, it reads the viewport size directly
         break;
+
     default:
         break;
     }

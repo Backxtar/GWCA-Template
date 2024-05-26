@@ -1,5 +1,4 @@
 #include "draw.h"
-#include "hooks.h"
 
 // START declare
 void HandleKeyState();

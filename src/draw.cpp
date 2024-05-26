@@ -22,7 +22,7 @@ void DrawUI(IDirect3DDevice9* device)
 		Draw::imgui_init = TRUE;
 	}
 
-	ImGui::GetIO().AddKeyEvent(ImGuiKey_ModCtrl, (GetKeyState(VK_CONTROL) & 0x8000) != 0);
+	ImGui::GetIO().AddKeyEvent(ImGuiKey_ModC, (GetKeyState(VK_CONTROL) & 0x8000) != 0);
 	ImGui::GetIO().AddKeyEvent(ImGuiKey_ModShift, (GetKeyState(VK_SHIFT) & 0x8000) != 0);
 	ImGui::GetIO().AddKeyEvent(ImGuiKey_ModAlt, (GetKeyState(VK_MENU) & 0x8000) != 0);
 

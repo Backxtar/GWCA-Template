@@ -31,10 +31,9 @@
 
 #include <direct.h>
 #include <d3d9.h>
-#include <ImGui/imgui.h>
-#include <imgui_internal.h>
-#include "ImGui/backend/imgui_impl_Win32.h"
-#include "ImGui/backend/imgui_impl_dx9.h"
+#include <imgui/imgui.h>
+#include "imgui/imgui_impl_Win32.h"
+#include "imgui/imgui_impl_dx9.h"
 
 #include "hooks.h"
 #include "draw.h"
@@ -94,7 +93,6 @@
 #include "GWCA/Managers/AgentMgr.h"
 #include "GWCA/Managers/CameraMgr.h"
 #include "GWCA/Managers/ChatMgr.h"
-#include "GWCA/Managers/CtoSMgr.h"
 #include "GWCA/Managers/EffectMgr.h"
 #include "GWCA/Managers/EventMgr.h"
 #include "GWCA/Managers/FriendListMgr.h"

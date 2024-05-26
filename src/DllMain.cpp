@@ -8,7 +8,7 @@ BOOL WINAPI DllMain(HMODULE hModule, DWORD dwReason, LPVOID lpReserved)
     if (dwReason == DLL_PROCESS_ATTACH) 
     {
         HANDLE handle = CreateThread(0, 0, ThreadProc, hModule, 0, 0);
-        CloseHandle(handle);
+        if (handle) CloseHandle(handle);
     }
 
     return TRUE;

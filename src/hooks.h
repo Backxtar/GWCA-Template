@@ -3,8 +3,13 @@
 
 namespace Hooks
 {
-	static bool     dll_running = false;
-	static long		OldWndProc;
+	struct Globals 
+	{
+		bool	dll_running = false;
+		long	OldWndProc;
+	};
+
+	inline Globals hVar;
 }
 
 DWORD WINAPI ThreadProc(LPVOID lpModule);

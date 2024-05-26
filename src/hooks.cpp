@@ -13,13 +13,13 @@ DWORD WINAPI ThreadProc(LPVOID lpModule)
     GW::Render::SetRenderCallback(DrawUI);
     GW::Render::SetResetCallback([](IDirect3DDevice9* /*device*/) { ImGui_ImplDX9_InvalidateDeviceObjects(); });
 
-    Hooks::dll_running = true;
-    while (Hooks::dll_running)
+    Hooks::hVar.dll_running = true;
+    while (Hooks::hVar.dll_running)
     {
         if (GetAsyncKeyState(VK_END) & 1) 
-            Hooks::dll_running = false;
+            Hooks::hVar.dll_running = false;
         if (GetAsyncKeyState(VK_INSERT) & 1)
-            Draw::imgui_show = !Draw::imgui_show;
+            Draw::dVar.imgui_show = !Draw::dVar.imgui_show;
 
         Sleep(100);
     }
@@ -44,13 +44,19 @@ LRESULT CALLBACK SafeWndProc(HWND hWnd, UINT Message, WPARAM wParam, LPARAM lPar
         return WndProc(hWnd, Message, wParam, lParam);
     }
     __except (EXCEPTION_EXECUTE_HANDLER) {
-        return CallWindowProc(reinterpret_cast<WNDPROC>(Hooks::OldWndProc), hWnd, Message, wParam, lParam);
+        return CallWindowProc(reinterpret_cast<WNDPROC>(Hooks::hVar.OldWndProc), hWnd, Message, wParam, lParam);
     }
 }
 
 LRESULT CALLBACK WndProc(HWND hWnd, UINT Message, WPARAM wParam, LPARAM lParam)
 {
-    bool right_mouse_down = false;
+    static bool right_mouse_down = false;
+
+    if (Message == WM_CLOSE || (Message == WM_SYSCOMMAND && wParam == SC_CLOSE)) 
+        return 0;
+
+    if (!Draw::dVar.imgui_show) 
+        return CallWindowProc((WNDPROC)Hooks::hVar.OldWndProc, hWnd, Message, wParam, lParam);
 
     if (Message == WM_RBUTTONUP)
         right_mouse_down = false;
@@ -63,6 +69,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT Message, WPARAM wParam, LPARAM lParam)
     
     const ImGuiIO& io = ImGui::GetIO();
     const bool skip_mouse_capture = right_mouse_down || GW::UI::GetIsWorldMapShowing() || GW::Map::GetIsInCinematic();
+
     if (ImGui_ImplWin32_WndProcHandler(hWnd, Message, wParam, lParam) && !skip_mouse_capture) return TRUE;
 
     switch (Message) {
@@ -85,8 +92,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT Message, WPARAM wParam, LPARAM lParam)
     case WM_MOUSEWHEEL: {
         if (io.WantCaptureMouse && !skip_mouse_capture)
             return true;
-        break;
     }
+        break;
 
     // keyboard messages
     case WM_KEYUP:
@@ -123,5 +130,5 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT Message, WPARAM wParam, LPARAM lParam)
         break;
     }
 
-    return CallWindowProc((WNDPROC)Hooks::OldWndProc, hWnd, Message, wParam, lParam);
+    return CallWindowProc((WNDPROC)Hooks::hVar.OldWndProc, hWnd, Message, wParam, lParam);
 }

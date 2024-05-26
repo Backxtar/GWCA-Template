@@ -4,9 +4,9 @@ void DrawUI(IDirect3DDevice9* device)
 {
 	HWND hWnd = GW::MemoryMgr::GetGWWindowHandle();
 
-	if (!Draw::imgui_init)
+	if (!Draw::dVar.imgui_init)
 	{
-		Hooks::OldWndProc = SetWindowLongPtr(hWnd, GWL_WNDPROC, reinterpret_cast<long>(SafeWndProc));
+		Hooks::hVar.OldWndProc = SetWindowLongPtr(hWnd, GWL_WNDPROC, reinterpret_cast<long>(SafeWndProc));
 
 		IMGUI_CHECKVERSION();
 		ImGui::CreateContext();
@@ -19,7 +19,7 @@ void DrawUI(IDirect3DDevice9* device)
 		io.MouseDrawCursor = false;
 		io.ConfigWindowsMoveFromTitleBarOnly = true;
 
-		Draw::imgui_init = true;
+		Draw::dVar.imgui_init = true;
 	}
 
 	ImGui::GetIO().AddKeyEvent(ImGuiKey_ModCtrl, (GetKeyState(VK_CONTROL) & 0x8000) != 0);
@@ -31,10 +31,11 @@ void DrawUI(IDirect3DDevice9* device)
 	ImGui::NewFrame();
 
 	// Draw UI elements
-	if (Draw::imgui_show)
+	if (Draw::dVar.imgui_show)
 	{
-		ImGui::Begin("Hello, World!");
-		ImGui::Text("This is a sample text.");
+		ImGui::SetNextWindowBgAlpha(0.7f);
+		ImGui::Begin("Hello Guild Wars!", 0, ImGuiWindowFlags_NoResize);
+		ImGui::Text("This is a mod made by Backxtar!");
 		ImGui::End();
 	}
 
@@ -44,12 +45,12 @@ void DrawUI(IDirect3DDevice9* device)
 	ImDrawData* draw_data = ImGui::GetDrawData();
 	ImGui_ImplDX9_RenderDrawData(draw_data);
 
-	if (!Hooks::dll_running && Draw::imgui_init)
+	if (!Hooks::hVar.dll_running && Draw::dVar.imgui_init)
 	{
 		ImGui_ImplDX9_Shutdown();
 		ImGui_ImplWin32_Shutdown();
 		ImGui::DestroyContext();
-		SetWindowLongPtr(hWnd, GWL_WNDPROC, Hooks::OldWndProc);
-		Draw::imgui_init = false;
+		SetWindowLongPtr(hWnd, GWL_WNDPROC, Hooks::hVar.OldWndProc);
+		Draw::dVar.imgui_init = false;
 	}
 }

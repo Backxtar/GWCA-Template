@@ -19,10 +19,10 @@ void DrawUI(IDirect3DDevice9* device)
 		io.MouseDrawCursor = false;
 		io.ConfigWindowsMoveFromTitleBarOnly = true;
 
-		Draw::imgui_init = TRUE;
+		Draw::imgui_init = true;
 	}
 
-	ImGui::GetIO().AddKeyEvent(ImGuiKey_ModC, (GetKeyState(VK_CONTROL) & 0x8000) != 0);
+	ImGui::GetIO().AddKeyEvent(ImGuiKey_ModCtrl, (GetKeyState(VK_CONTROL) & 0x8000) != 0);
 	ImGui::GetIO().AddKeyEvent(ImGuiKey_ModShift, (GetKeyState(VK_SHIFT) & 0x8000) != 0);
 	ImGui::GetIO().AddKeyEvent(ImGuiKey_ModAlt, (GetKeyState(VK_MENU) & 0x8000) != 0);
 
@@ -50,6 +50,6 @@ void DrawUI(IDirect3DDevice9* device)
 		ImGui_ImplWin32_Shutdown();
 		ImGui::DestroyContext();
 		SetWindowLongPtr(hWnd, GWL_WNDPROC, Hooks::OldWndProc);
-		Draw::imgui_init = FALSE;
+		Draw::imgui_init = false;
 	}
 }

@@ -3,8 +3,8 @@
 
 namespace Draw
 {
-	static bool		imgui_show = TRUE;
-	static bool		imgui_init = FALSE;
+	static bool		imgui_show = true;
+	static bool		imgui_init = false;
 }
 
 void DrawUI(IDirect3DDevice9* device);

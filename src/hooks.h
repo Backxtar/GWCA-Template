@@ -3,7 +3,7 @@
 
 namespace Hooks
 {
-	static bool     dll_running = FALSE;
+	static bool     dll_running = false;
 	static long		OldWndProc;
 }
 

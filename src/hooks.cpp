@@ -10,31 +10,27 @@ DWORD WINAPI ThreadProc(LPVOID lpModule)
             GW::Chat::WriteChat(GW::Chat::CHANNEL_MODERATOR, L"Template++: Initialized");
         });
 
+    dll_running = true;
+
     GW::Render::SetRenderCallback(DrawUI);
     GW::Render::SetResetCallback([](IDirect3DDevice9* /*device*/) { ImGui_ImplDX9_InvalidateDeviceObjects(); });
 
-    Hooks::hVar.dll_running = true;
-    while (Hooks::hVar.dll_running)
+    while (dll_running)
     {
-        if (GetAsyncKeyState(VK_END) & 1) 
-            Hooks::hVar.dll_running = false;
-        if (GetAsyncKeyState(VK_INSERT) & 1)
-            Draw::dVar.imgui_show = !Draw::dVar.imgui_show;
-
-        Sleep(100);
+        // Do other stuff
+        Sleep(1000);
     }
     
     GW::GameThread::Enqueue([]()
         {
             GW::Chat::WriteChat(GW::Chat::CHANNEL_MODERATOR, L"Template++: Bye!");
         });
+    
     // Hooks are disable from Guild Wars thread (safely), so we just make sure we exit the last hooks
     GW::DisableHooks();
-    while (GW::HookBase::GetInHookCount()) 
-        Sleep(16);
-
+    while (GW::HookBase::GetInHookCount()) Sleep(16);
+    
     GW::Terminate();
-
     FreeLibraryAndExitThread(hModule, EXIT_SUCCESS);
 }
 
@@ -44,7 +40,7 @@ LRESULT CALLBACK SafeWndProc(HWND hWnd, UINT Message, WPARAM wParam, LPARAM lPar
         return WndProc(hWnd, Message, wParam, lParam);
     }
     __except (EXCEPTION_EXECUTE_HANDLER) {
-        return CallWindowProc(reinterpret_cast<WNDPROC>(Hooks::hVar.OldWndProc), hWnd, Message, wParam, lParam);
+        return CallWindowProc(reinterpret_cast<WNDPROC>(OldWndProc), hWnd, Message, wParam, lParam);
     }
 }
 
@@ -55,8 +51,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT Message, WPARAM wParam, LPARAM lParam)
     if (Message == WM_CLOSE || (Message == WM_SYSCOMMAND && wParam == SC_CLOSE)) 
         return 0;
 
-    if (!Draw::dVar.imgui_show) 
-        return CallWindowProc((WNDPROC)Hooks::hVar.OldWndProc, hWnd, Message, wParam, lParam);
+    if (!imgui_show) 
+        return CallWindowProc((WNDPROC)OldWndProc, hWnd, Message, wParam, lParam);
 
     if (Message == WM_RBUTTONUP)
         right_mouse_down = false;
@@ -70,7 +66,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT Message, WPARAM wParam, LPARAM lParam)
     const ImGuiIO& io = ImGui::GetIO();
     const bool skip_mouse_capture = right_mouse_down || GW::UI::GetIsWorldMapShowing() || GW::Map::GetIsInCinematic();
 
-    if (skip_mouse_capture) return CallWindowProc((WNDPROC)Hooks::hVar.OldWndProc, hWnd, Message, wParam, lParam);
+    if (skip_mouse_capture) return CallWindowProc((WNDPROC)OldWndProc, hWnd, Message, wParam, lParam);
     if (ImGui_ImplWin32_WndProcHandler(hWnd, Message, wParam, lParam) && !skip_mouse_capture) return TRUE;
 
     switch (Message) {
@@ -125,5 +121,5 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT Message, WPARAM wParam, LPARAM lParam)
         break;
     }
 
-    return CallWindowProc((WNDPROC)Hooks::hVar.OldWndProc, hWnd, Message, wParam, lParam);
+    return CallWindowProc((WNDPROC)OldWndProc, hWnd, Message, wParam, lParam);
 }

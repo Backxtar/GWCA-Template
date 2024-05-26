@@ -92,7 +92,9 @@ void CloseImGui(HWND& hWnd)
 		ImGui_ImplDX9_Shutdown();
 		ImGui_ImplWin32_Shutdown();
 		ImGui::DestroyContext();
+
 		SetWindowLongPtr(hWnd, GWL_WNDPROC, OldWndProc);
+		
 		imgui_init = false;
 	}
 }

@@ -1,4 +1,11 @@
 #include "draw.h"
+#include "hooks.h"
+
+// START declare
+void HandleKeyState();
+void InitImGui(HWND& hWnd, IDirect3DDevice9* device);
+void CloseImGui(HWND& hWnd);
+// END declare
 
 void DrawUI(IDirect3DDevice9* device)
 {

@@ -26,34 +26,63 @@ void DrawUI(IDirect3DDevice9* device)
 	{
 		//ImGui::ShowDemoWindow();
 		ImGui::SetNextWindowBgAlpha(0.7f);
-		ImGui::Begin("Hello Guild Wars!", 0, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoSavedSettings);
-		ImGui::Text("This is a mod made by Backxtar!");
+		ImGui::Begin("Hello Guild Wars!", 0, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_AlwaysAutoResize);
 
-		if (ImGui::BeginTable("statistics", 2))
+		if (ImGui::BeginTabBar("tabbar"))
 		{
-			ImGui::TableSetupColumn("key");
-			ImGui::TableSetupColumn("value");
-			//ImGui::TableHeadersRow();
+			if (ImGui::BeginTabItem("Statistics")) 
+			{ 
+				auto windowWidth = ImGui::GetWindowSize().x;
 
-			ImGui::TableNextRow();
-			ImGui::TableNextColumn();
-			ImGui::Text("Gold (CUR)");
-			ImGui::TableNextColumn();
-			ImGui::Text("12.245");
+				const std::string t1 = "Bot statistics"; 
+				auto textWidth = ImGui::CalcTextSize(t1.c_str()).x;
+				ImGui::SetCursorPosX((windowWidth - textWidth) * 0.5f);
+				ImGui::Text(t1.c_str());
+				ImGui::Separator();
 
-			ImGui::TableNextRow();
-			ImGui::TableNextColumn();
-			ImGui::Text("Gold (ITEMS)");
-			ImGui::TableNextColumn();
-			ImGui::Text("600");
+				ImGui::NewLine();
+				ImGui::SetWindowFontScale(1.5f);
+				textWidth = ImGui::CalcTextSize(timer.c_str()).x;
+				ImGui::SetCursorPosX((windowWidth - textWidth) * 0.5f);
+				ImGui::Text(timer.c_str());
+				ImGui::SetWindowFontScale(1.0f);
+				ImGui::NewLine();
 
-			ImGui::TableNextRow();
-			ImGui::TableNextColumn();
-			ImGui::Text("Elite Tomes");
-			ImGui::TableNextColumn();
-			ImGui::Text("124");
+				if (ImGui::BeginTable("statistics", 2))
+				{
+					ImGui::TableSetupColumn("key");
+					ImGui::TableSetupColumn("value");
 
-			ImGui::EndTable();
+					ImGui::TableNextRow();
+					ImGui::TableNextColumn();
+					ImGui::Text("Gold (CUR)");
+					ImGui::TableNextColumn();
+					ImGui::Text("12.245");
+
+					ImGui::TableNextRow();
+					ImGui::TableNextColumn();
+					ImGui::Text("Gold (ITEMS)");
+					ImGui::TableNextColumn();
+					ImGui::Text("600");
+
+					ImGui::TableNextRow();
+					ImGui::TableNextColumn();
+					ImGui::Text("Elite Tomes");
+					ImGui::TableNextColumn();
+					ImGui::Text("124");
+
+					ImGui::EndTable();
+				}
+				ImGui::EndTabItem(); 
+			}
+			if (ImGui::BeginTabItem("Settings")) 
+			{ 
+				ImGui::Text("Pick up items");
+				ImGui::Separator();
+				ImGui::Text("This is the Settings page!");
+				ImGui::EndTabItem(); 
+			}
+			ImGui::EndTabBar();
 		}
 		ImGui::End();
 	}

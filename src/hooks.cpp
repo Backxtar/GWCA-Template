@@ -1,8 +1,10 @@
 #include "hooks.h"
+#include <thread>
 
 // START declare
 extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 LRESULT CALLBACK WndProc(HWND hWnd, UINT Message, WPARAM wParam, LPARAM lParam);
+const std::string GetTimeElapsed();
 // END declare
 
 DWORD WINAPI ThreadProc(LPVOID lpModule)
@@ -19,10 +21,19 @@ DWORD WINAPI ThreadProc(LPVOID lpModule)
     GW::Render::SetRenderCallback(DrawUI);
     GW::Render::SetResetCallback([](IDirect3DDevice9* /*device*/) { ImGui_ImplDX9_InvalidateDeviceObjects(); });
 
+    std::thread clock = std::thread([]() 
+        { 
+            while (dll_running)
+            {
+                timer = GetTimeElapsed();
+                Sleep(100);
+            }
+        });
+
     while (dll_running)
     {
         // Do other stuff
-        Sleep(1000);
+        Sleep(2000);
     }
     
     GW::GameThread::Enqueue([]()
@@ -126,4 +137,21 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT Message, WPARAM wParam, LPARAM lParam)
     }
 
     return CallWindowProc((WNDPROC)OldWndProc, hWnd, Message, wParam, lParam);
+}
+
+const std::string GetTimeElapsed()
+{
+    auto current = std::chrono::system_clock::now();
+    auto elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(current - start);
+
+    auto secs = std::chrono::duration_cast<std::chrono::seconds>(elapsed);
+    elapsed -= std::chrono::duration_cast<std::chrono::milliseconds>(secs);
+    auto mins = std::chrono::duration_cast<std::chrono::minutes>(secs);
+    secs -= std::chrono::duration_cast<std::chrono::seconds>(mins);
+    auto hour = std::chrono::duration_cast<std::chrono::hours>(mins);
+    mins -= std::chrono::duration_cast<std::chrono::minutes>(hour);
+
+    std::stringstream ss;
+    ss << (hour.count() < 10 ? "0" + std::to_string(hour.count()) : std::to_string(hour.count())) << ":" << (mins.count() < 10 ? "0" + std::to_string(mins.count()) : std::to_string(mins.count())) << ":" << (secs.count() < 10 ? "0" + std::to_string(secs.count()) : std::to_string(secs.count()));
+    return ss.str();
 }

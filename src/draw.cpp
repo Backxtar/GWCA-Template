@@ -97,7 +97,7 @@ void InitImGui(HWND& hWnd, IDirect3DDevice9* device)
 		ImGuiIO& io = ImGui::GetIO();
 		io.MouseDrawCursor = false;
 		io.ConfigWindowsMoveFromTitleBarOnly = true;
-		//io.Fonts->AddFontFromFileTTF("../ressources/Font.ttf", 16.0f);
+		io.Fonts->AddFontFromFileTTF("C:\\Users\\Josh Quick\\Nextcloud\\Games\\Guild Wars\\C++\\GWCA-Template\\resources\\Font.ttf", 16.0f);
 
 		ImGuiStyle& style = ImGui::GetStyle();
 		style.TabRounding = 8.f;

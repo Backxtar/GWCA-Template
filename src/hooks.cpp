@@ -1,5 +1,4 @@
 #include "hooks.h"
-#include <thread>
 
 // START declare
 extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
@@ -13,7 +12,9 @@ DWORD WINAPI ThreadProc(LPVOID lpModule)
     GW::Initialize();
     GW::GameThread::Enqueue([]()
         {
-            GW::Chat::WriteChat(GW::Chat::CHANNEL_MODERATOR, L"Template++: Initialized");
+            std::wstringstream wss;
+            wss << "Template++: Welcome, '" << GW::GetCharContext()->player_name << "'!";
+            GW::Chat::WriteChat(GW::Chat::CHANNEL_MODERATOR, wss.str().c_str());
         });
 
     dll_running = true;
@@ -25,7 +26,11 @@ DWORD WINAPI ThreadProc(LPVOID lpModule)
         { 
             while (dll_running)
             {
-                timer = GetTimeElapsed();
+                if (bot_running)
+                {
+                    timerTick++;
+                    timerValue = GetTimeElapsed();
+                }
                 Sleep(100);
             }
         });
@@ -38,7 +43,9 @@ DWORD WINAPI ThreadProc(LPVOID lpModule)
     
     GW::GameThread::Enqueue([]()
         {
-            GW::Chat::WriteChat(GW::Chat::CHANNEL_MODERATOR, L"Template++: Bye!");
+            std::wstringstream wss;
+            wss << "Template++: Bye, '" << GW::GetCharContext()->player_name << "'!";
+            GW::Chat::WriteChat(GW::Chat::CHANNEL_MODERATOR, wss.str().c_str());
         });
     
     // Hooks are disable from Guild Wars thread (safely), so we just make sure we exit the last hooks
@@ -141,17 +148,13 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT Message, WPARAM wParam, LPARAM lParam)
 
 const std::string GetTimeElapsed()
 {
-    auto current = std::chrono::system_clock::now();
-    auto elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(current - start);
-
-    auto secs = std::chrono::duration_cast<std::chrono::seconds>(elapsed);
-    elapsed -= std::chrono::duration_cast<std::chrono::milliseconds>(secs);
-    auto mins = std::chrono::duration_cast<std::chrono::minutes>(secs);
-    secs -= std::chrono::duration_cast<std::chrono::seconds>(mins);
-    auto hour = std::chrono::duration_cast<std::chrono::hours>(mins);
-    mins -= std::chrono::duration_cast<std::chrono::minutes>(hour);
+    auto sec    = timerTick / 10;
+    
+    auto curSec = sec % 60;
+    auto curMin = (sec / 60) % 60;
+    auto curHrs = sec / 3600;
 
     std::stringstream ss;
-    ss << (hour.count() < 10 ? "0" + std::to_string(hour.count()) : std::to_string(hour.count())) << ":" << (mins.count() < 10 ? "0" + std::to_string(mins.count()) : std::to_string(mins.count())) << ":" << (secs.count() < 10 ? "0" + std::to_string(secs.count()) : std::to_string(secs.count()));
+    ss << (curHrs < 10 ? "0" + std::to_string(curHrs) : std::to_string(curHrs)) << ":" << (curMin < 10 ? "0" + std::to_string(curMin) : std::to_string(curMin)) << ":" << (curSec < 10 ? "0" + std::to_string(curSec) : std::to_string(curSec));
     return ss.str();
 }

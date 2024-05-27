@@ -1,6 +1,7 @@
 #include "draw.h"
 
 // START declare
+void TextCenter(const char* text);
 void HandleKeyState();
 void InitImGui(HWND& hWnd, IDirect3DDevice9* device);
 void CloseImGui(HWND& hWnd);
@@ -32,21 +33,18 @@ void DrawUI(IDirect3DDevice9* device)
 		{
 			if (ImGui::BeginTabItem("Statistics")) 
 			{ 
-				auto windowWidth = ImGui::GetWindowSize().x;
-
-				const std::string t1 = "Bot statistics"; 
-				auto textWidth = ImGui::CalcTextSize(t1.c_str()).x;
-				ImGui::SetCursorPosX((windowWidth - textWidth) * 0.5f);
-				ImGui::Text(t1.c_str());
+				TextCenter("Time running");
 				ImGui::Separator();
 
 				ImGui::NewLine();
 				ImGui::SetWindowFontScale(1.5f);
-				textWidth = ImGui::CalcTextSize(timer.c_str()).x;
-				ImGui::SetCursorPosX((windowWidth - textWidth) * 0.5f);
-				ImGui::Text(timer.c_str());
+				TextCenter(timerValue.c_str());
 				ImGui::SetWindowFontScale(1.0f);
 				ImGui::NewLine();
+
+				ImGui::Separator();
+				TextCenter("Overview");
+				ImGui::Separator();
 
 				if (ImGui::BeginTable("statistics", 2))
 				{
@@ -96,17 +94,32 @@ void DrawUI(IDirect3DDevice9* device)
 	CloseImGui(hWnd);
 }
 
+void TextCenter(const char* text)
+{
+	auto windowWidth = ImGui::GetWindowSize().x;
+	auto textWidth = ImGui::CalcTextSize(text).x;
+	ImGui::SetCursorPosX((windowWidth - textWidth) * 0.5f);
+	ImGui::Text(text);
+}
+
 void HandleKeyState()
 {
 	if (GetAsyncKeyState(VK_END) & 1)
 	{
 		dll_running = false;
-		GW::Chat::WriteChat(GW::Chat::CHANNEL_MODERATOR, L"Template++: Terminating!");
+		GW::Chat::WriteChat(GW::Chat::CHANNEL_MODERATOR, L"Template++: Terminating ... please wait!");
 	}
+
 	if (GetAsyncKeyState(VK_INSERT) & 1)
 	{
 		imgui_show = !imgui_show;
 		GW::Chat::WriteChat(GW::Chat::CHANNEL_MODERATOR, (imgui_show ? L"Template++: UI Enabled" : L"Template++: UI Disabled"));
+	}
+
+	if (GetAsyncKeyState(VK_DELETE) & 1)
+	{
+		bot_running = !bot_running;
+		GW::Chat::WriteChat(GW::Chat::CHANNEL_MODERATOR, (bot_running ? L"Template++: Running" : L"Template++: Stopped"));
 	}
 }
 

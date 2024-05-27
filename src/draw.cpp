@@ -27,7 +27,7 @@ void DrawUI(IDirect3DDevice9* device)
 	{
 		//ImGui::ShowDemoWindow();
 		ImGui::SetNextWindowBgAlpha(0.7f);
-		ImGui::Begin("Hello Guild Wars!", 0, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_AlwaysAutoResize);
+		ImGui::Begin("Template++", &dll_running, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_AlwaysAutoResize);
 
 		if (ImGui::BeginTabBar("tabbar"))
 		{
@@ -36,11 +36,11 @@ void DrawUI(IDirect3DDevice9* device)
 				TextCenter("Time running");
 				ImGui::Separator();
 
-				ImGui::NewLine();
+				ImGui::Spacing();
 				ImGui::SetWindowFontScale(1.5f);
 				TextCenter(timerValue.c_str());
 				ImGui::SetWindowFontScale(1.0f);
-				ImGui::NewLine();
+				ImGui::Spacing();
 
 				ImGui::Separator();
 				TextCenter("Overview");
@@ -53,13 +53,33 @@ void DrawUI(IDirect3DDevice9* device)
 
 					ImGui::TableNextRow();
 					ImGui::TableNextColumn();
-					ImGui::Text("Gold (CUR)");
+					ImGui::Text("Runs");
+					ImGui::TableNextColumn();
+					ImGui::Text("102");
+
+					ImGui::TableNextRow();
+					ImGui::TableNextColumn();
+					ImGui::Text("Succeed");
+					ImGui::TableNextColumn();
+					ImGui::Text("97");
+
+					ImGui::TableNextRow();
+					ImGui::TableNextColumn();
+					ImGui::Text("Failed");
+					ImGui::TableNextColumn();
+					ImGui::Text("2");
+
+					ImGui::Spacing();
+
+					ImGui::TableNextRow();
+					ImGui::TableNextColumn();
+					ImGui::Text("Gold");
 					ImGui::TableNextColumn();
 					ImGui::Text("12.245");
 
 					ImGui::TableNextRow();
 					ImGui::TableNextColumn();
-					ImGui::Text("Gold (ITEMS)");
+					ImGui::Text("Items");
 					ImGui::TableNextColumn();
 					ImGui::Text("600");
 
@@ -71,6 +91,17 @@ void DrawUI(IDirect3DDevice9* device)
 
 					ImGui::EndTable();
 				}
+
+				ImGui::Separator();
+				ImGui::Spacing();
+				const std::string label = bot_running ? "Stop" : "Start";
+				ImGui::SetCursorPosX((ImGui::GetWindowSize().x - ImVec2(ImGui::GetWindowSize().x * 0.5f, 0.0f).x) * 0.5f);
+				if (ImGui::Button(label.c_str(), ImVec2(ImGui::GetWindowSize().x * 0.5f, 0.0f)))
+				{
+					bot_running = !bot_running;
+					GW::Chat::WriteChat(GW::Chat::CHANNEL_MODERATOR, (bot_running ? L"Template++: Running" : L"Template++: Stopped"));
+				}
+
 				ImGui::EndTabItem(); 
 			}
 			if (ImGui::BeginTabItem("Settings")) 
@@ -104,22 +135,10 @@ void TextCenter(const char* text)
 
 void HandleKeyState()
 {
-	if (GetAsyncKeyState(VK_END) & 1)
-	{
-		dll_running = false;
-		GW::Chat::WriteChat(GW::Chat::CHANNEL_MODERATOR, L"Template++: Terminating ... please wait!");
-	}
-
 	if (GetAsyncKeyState(VK_INSERT) & 1)
 	{
 		imgui_show = !imgui_show;
 		GW::Chat::WriteChat(GW::Chat::CHANNEL_MODERATOR, (imgui_show ? L"Template++: UI Enabled" : L"Template++: UI Disabled"));
-	}
-
-	if (GetAsyncKeyState(VK_DELETE) & 1)
-	{
-		bot_running = !bot_running;
-		GW::Chat::WriteChat(GW::Chat::CHANNEL_MODERATOR, (bot_running ? L"Template++: Running" : L"Template++: Stopped"));
 	}
 }
 

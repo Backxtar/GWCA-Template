@@ -29,10 +29,10 @@ void DrawUI(IDirect3DDevice9* device)
 		ImGui::Begin("Hello Guild Wars!", 0, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoSavedSettings);
 		ImGui::Text("This is a mod made by Backxtar!");
 
-		if (ImGui::BeginTable("Table1", 2))
+		if (ImGui::BeginTable("statistics", 2))
 		{
-			ImGui::TableSetupColumn("Key");
-			ImGui::TableSetupColumn("Value");
+			ImGui::TableSetupColumn("key");
+			ImGui::TableSetupColumn("value");
 			//ImGui::TableHeadersRow();
 
 			ImGui::TableNextRow();
@@ -97,7 +97,9 @@ void InitImGui(HWND& hWnd, IDirect3DDevice9* device)
 		ImGuiIO& io = ImGui::GetIO();
 		io.MouseDrawCursor = false;
 		io.ConfigWindowsMoveFromTitleBarOnly = true;
-		io.Fonts->AddFontFromFileTTF("C:\\Users\\Josh Quick\\Nextcloud\\Games\\Guild Wars\\C++\\GWCA-Template\\resources\\Font.ttf", 16.0f);
+
+		[[maybe_unused]]
+		ImFont* font = io.Fonts->AddFontFromFileTTF("C:\\Users\\Josh Quick\\Nextcloud\\Games\\Guild Wars\\C++\\GWCA-Template\\resources\\Font.ttf", 16.0f);
 
 		ImGuiStyle& style = ImGui::GetStyle();
 		style.TabRounding = 8.f;

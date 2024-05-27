@@ -26,8 +26,35 @@ void DrawUI(IDirect3DDevice9* device)
 	{
 		//ImGui::ShowDemoWindow();
 		ImGui::SetNextWindowBgAlpha(0.7f);
-		ImGui::Begin("Hello Guild Wars!", 0, ImGuiWindowFlags_NoResize);
+		ImGui::Begin("Hello Guild Wars!", 0, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoSavedSettings);
 		ImGui::Text("This is a mod made by Backxtar!");
+
+		if (ImGui::BeginTable("Table1", 2))
+		{
+			ImGui::TableSetupColumn("Key");
+			ImGui::TableSetupColumn("Value");
+			//ImGui::TableHeadersRow();
+
+			ImGui::TableNextRow();
+			ImGui::TableNextColumn();
+			ImGui::Text("Gold (CUR)");
+			ImGui::TableNextColumn();
+			ImGui::Text("12.245");
+
+			ImGui::TableNextRow();
+			ImGui::TableNextColumn();
+			ImGui::Text("Gold (ITEMS)");
+			ImGui::TableNextColumn();
+			ImGui::Text("600");
+
+			ImGui::TableNextRow();
+			ImGui::TableNextColumn();
+			ImGui::Text("Elite Tomes");
+			ImGui::TableNextColumn();
+			ImGui::Text("124");
+
+			ImGui::EndTable();
+		}
 		ImGui::End();
 	}
 
@@ -70,6 +97,7 @@ void InitImGui(HWND& hWnd, IDirect3DDevice9* device)
 		ImGuiIO& io = ImGui::GetIO();
 		io.MouseDrawCursor = false;
 		io.ConfigWindowsMoveFromTitleBarOnly = true;
+		//io.Fonts->AddFontFromFileTTF("../ressources/Font.ttf", 16.0f);
 
 		ImGuiStyle& style = ImGui::GetStyle();
 		style.TabRounding = 8.f;
